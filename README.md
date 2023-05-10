@@ -9,8 +9,8 @@ It is very common to solve problems using a sequence of MapReduce steps. RFor co
 • Step 1: doc/term counts
 First convert a word to a term. Second, the key is a pair (document_id, term). 
 In this step, the MapReduce key, use the string “+” to send to the reducer, so if mapper is processing the document with ID “shakespeare-hamlet” and is processing the term “father”, it would emit the key “shakespere-hamlet+father”. Sample output for this and the other steps is below.
-different order.
-# hdfs dfs -cat /output/1-term-count/* | head -n 5 austen-emma+a 3073
+different order. 
+#hdfs dfs -cat /output/1-term-count/* | head -n 5 austen-emma+a 3073
 austen-emma+abbey 23
 austen-emma+abbeymill 7
 Example Output / Hint
@@ -18,8 +18,8 @@ austen-emma+abbeyoh 1
 austen-emma+abbots 1
 
 • Step 2: term count per document
-This step reads the document corpus again and just calculates the number of terms per document.  Output for this step is a stream of tuples of the form (doc_id, term_count) and examples are below.
-# hdfs dfs -cat /output/2-term-count-document/* | head -n 5 austen-emma 158128
+This step reads the document corpus again and just calculates the number of terms per document.  Output for this step is a stream of tuples of the form (doc_id, term_count) and examples are below. 
+#hdfs dfs -cat /output/2-term-count-document/* | head -n 5 austen-emma 158128
 austen-persuasion 83259
 austen-sense 118620
 bible-kjv 790029
