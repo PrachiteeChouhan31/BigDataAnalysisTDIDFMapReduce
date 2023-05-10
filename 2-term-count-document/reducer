@@ -1,0 +1,44 @@
+#!/usr/bin/python3
+
+# Reducer input is (doc_id word) 
+# But it will see all tuples for a word before it sees any tuples from the next word
+
+import sys
+
+#  Current key being processed, and accumulated count
+current_doc_id = None
+current_term=None
+current_count = 0
+
+# The word just being read in
+doc_id = None
+term =None
+count=0
+# input comes from STDIN
+for line in sys.stdin:
+    
+    # remove leading and trailing whitespace
+    line = line.strip()
+    
+    # Parse the input we got from mapper -- (doc_id+word <tab> count)
+    # Second argument to split is maximum number of splits
+    doc_id, term = line.split('\t')
+
+    # Convert count (currently a string) to int, but guard against bad data
+    # DANGER!  Continue silently on bad data.
+    
+    
+    if current_doc_id == doc_id:
+        current_count += 1
+    else:
+        # Seeing either a new different key, or the first one
+        if current_doc_id:
+            # Write result to STDOUT
+            print('%s\t%s' % (current_doc_id, current_count))
+        current_count = 1
+        current_doc_id = doc_id
+        current_term = term
+
+# STDIN stream is empty.  But output the last key and value
+if current_count > 0:
+    print('%s\t%s' % (current_doc_id, current_count))

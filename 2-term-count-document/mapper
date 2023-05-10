@@ -1,0 +1,15 @@
+#!/usr/bin/python3
+
+#(doc-id+word, 1)
+import sys
+import string
+import os
+
+for line in sys.stdin:
+    doc_id=os.path.splitext(os.path.basename(os.getenv('map_input_file')))[0]
+    for word in line.strip().split():
+        lowered = word.lower()
+        filtered = "".join(filter(lambda c: 97 <= ord(c) <= 122, lowered))
+        if len(filtered)>0:
+            print('%s\t%s' % (doc_id, filtered))
+
