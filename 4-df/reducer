@@ -1,0 +1,51 @@
+#!/usr/bin/python3
+
+# Reducer input is (term doc_id)
+#output will be (term, unique-doc_id_count)
+#streamin gis sorting with two keys 
+# But it will see all tuples for a word before it sees any tuples from the next word
+
+import sys
+
+#  Current key being processed, and accumulated count
+current_doc_id = None
+current_term=None
+current_uniq_count = 0
+
+# The word just being read in
+doc_id = None
+term =None
+uniq_count=0
+uniq_doc_id_count =0
+# input comes from STDIN
+for line in sys.stdin:
+    
+    # remove leading and trailing whitespace
+    line = line.strip()
+    
+    # Parse the input we got from mapper -- (doc_id+word <tab> count)
+    # Second argument to split is maximum number of splits
+    term, doc_id = line.split('\t')
+
+    # Convert count (currently a string) to int, but guard against bad data
+    # DANGER!  Continue silently on bad data.
+    
+    if current_term == term:
+        if current_doc_id == doc_id:
+            current_uniq_count += 1
+        else:
+            uniq_doc_id_count +=1
+            current_doc_id = doc_id
+    else:
+        # Seeing either a new different key, or the first one
+        if current_term:
+            # Write result to STDOUT
+            print('%s\t%s' % (current_term,uniq_doc_id_count))
+        current_uniq_count = 1
+        current_doc_id = doc_id
+        current_term = term
+        uniq_doc_id_count=1
+
+# STDIN stream is empty.  But output the last key and value
+if current_uniq_count > 0:
+    print('%s\t%s' % (current_term,uniq_doc_id_count))
