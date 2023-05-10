@@ -1,0 +1,27 @@
+hdfs dfs -rm -r /output-data
+hdfs dfs -rm -r /input-data
+
+#creating input-data and putout-data hdfs file
+hdfs dfs -mkdir /input-data
+hdfs dfs -put /data/textcorpora/ /input-data
+hdfs dfs -mkdir /output-data
+
+#step1:doc/term counts
+bash run-hadoop-streaming 1-term-count textcorpora
+
+#step2:term count per document
+bash run-hadoop-streaming 2-term-count-document textcorpora
+
+#step3:split key from step1
+hdfs dfs -cp /output-data/1-term-count/part* /input-data/output-step1
+
+bash run-hadoop-streaming 3-split-doc-term output-step1
+
+#step4:compute DF
+bash run-hadoop-streaming-2 4-df textcorpora
+
+#compute TFIDF using HIVE
+hive <  5-tfidf.hive 
+
+#priting the output file
+hdfs dfs -cat /output-data/5-tfidf/*  | tee -a output-tfidf

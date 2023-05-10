@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# First argument is directory with mapper and reducer. 
+# Second argument is input directory in HDFS.  Convention is relative to /input-data
+
+hdfs dfs -rm -r /output-data/$1
+
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar \
+       -file $1/mapper \
+       -mapper $1/mapper \
+       -file $1/reducer  \
+       -reducer $1/reducer \
+       -input /input-data/$2 \
+       -output /output-data/$1

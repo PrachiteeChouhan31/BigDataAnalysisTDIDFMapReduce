@@ -1,0 +1,16 @@
+ 
+CREATE TABLE step2 (doc_id STRING, term_count INT) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+CREATE TABLE step3 (doc_id STRING, term STRING, count INT) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+CREATE TABLE step4 (term STRING, uniq_doc_id_count INT) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+
+
+LOAD DATA inpath "/output-data/2-term-count-document" into table step2;
+LOAD DATA inpath "/output-data/3-split-doc-term" into table step3;
+LOAD DATA inpath "/output-data/4-df" into table step4;
+
+
+CREATE VIEW view_doc_id AS SELECT doc_id FROM step3 GROUP BY doc_id HAVING count(*) > 1;
+CREATE TABLE tfidf_count AS SELECT DISTINCT step3.doc_id, step3.term, (1000000*((step3.count/step2.term_count)/step4.uniq_doc_id_count)) FROM step2, step4 INNER JOIN step3 ON step3.doc_id=step2.doc_id INNER JOIN view_doc_id ON step2.doc_id=view_doc_id.doc_id WHERE step4.term=step3.term;
+
+INSERT OVERWRITE DIRECTORY '/output-data/5-tfidf' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TEXTFILE SELECT * FROM tfidf_count;
+
