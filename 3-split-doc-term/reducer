@@ -1,0 +1,19 @@
+#!/usr/bin/python3
+
+# Reducer input is (doc_id word count) 
+# But it will see all tuples for a word before it sees any tuples from the next word
+
+import sys
+
+
+# input comes from STDIN
+for line in sys.stdin:
+    
+    # remove leading and trailing whitespace
+    line = line.strip()
+    
+    
+    doc_id, word, count = line.split('\t', 2)
+
+    
+    print('%s\t%s\t%s' % (doc_id, word, count))
